@@ -1,0 +1,43 @@
+/* Header.css */
+
+.header-container {
+    width: 100%;
+    max-width: 800px; /* Adjust this value as needed */
+    margin: 20px auto; /* Center the container horizontally and add some margin at the top */
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.header {
+    text-align: center;
+}
+
+.header-title {
+    margin: 0;
+    font-size: 2em;
+    color: #343a40;
+}
+
+.header-subtitle {
+    margin: 0;
+    font-size: 1.2em;
+    color: #6c757d;
+}
+
+.header-radio-group {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.header-radio-label {
+    margin-right: 15px;
+    font-size: 1em;
+    color: #343a40;
+}
+
+.header-radio-input {
+    margin-right: 5px;
+}
