@@ -55,7 +55,11 @@ function App() {
       <div>
         {Object.entries(amountOfFrames).length > 0 && (
           <div>
-            <DataEntry frameValues={amountOfFrames} />
+            <DataEntry
+              frameValues={amountOfFrames}
+              messageType={messageType}
+              protocol={selectedProtocol}
+            />
           </div>
         )}
       </div>
