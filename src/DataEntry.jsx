@@ -1,16 +1,20 @@
 import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import "./DataEntry.css";
+import MessageEncoder from "./MessageEncoder";
+import SaveToFile from "./SaveToFile";
 
-function DataEntry({ frameValues }) {
+function DataEntry({ frameValues, messageType, protocol }) {
   const [fieldValues, setFieldValues] = useState({});
-  const [frameData, setFrameData] = useState({});
+  const [frameData, setFrameData] = useState([]);
   const fieldRefs = useRef({});
 
   console.log(frameValues);
 
   useEffect(() => {
-    setFrameData({});
+    setFieldValues({});
+    setFrameData([]);
+    fieldRefs.current = {};
   }, [frameValues]);
 
   const handleInputChange = (e, key, index) => {
@@ -27,10 +31,9 @@ function DataEntry({ frameValues }) {
   const clearFields = () => {
     setFieldValues({});
     fieldRefs.current = {};
-    setFrameData({});
+    setFrameData([]);
   };
 
-  //Create function generateMessage that will loop through the input fields and generate a pipe delimited string for each frame.
   const generateMessage = () => {
     const messageFrames = Object.keys(frameValues).map((key) => {
       const numberOfFields = parseInt(frameValues[key], 10);
@@ -42,6 +45,23 @@ function DataEntry({ frameValues }) {
     });
     console.log(messageFrames);
     setFrameData(messageFrames);
+  };
+
+  const encodeMessage = () => {
+    const encodedMessage = MessageEncoder.encodeMessageFrames(frameData);
+    MessageEncoder.logControlCharacters(encodedMessage);
+    console.log(encodedMessage);
+
+    //Switch statement
+    if (protocol === "ASTM") {
+      if ((messageType = "Result")) {
+        SaveToFile.save(encodedMessage, "astmResults.in", "text/plain");
+      } else if ((messageType = "Query")) {
+        SaveToFile.save(encodedMessage, "astmQuery.in", "text/plain");
+      }
+    } else {
+      alert("HL7 function coming soon");
+    }
   };
 
   return (
@@ -84,10 +104,12 @@ function DataEntry({ frameValues }) {
         <button className="clear-button" onClick={clearFields}>
           Clear
         </button>
+        {frameData.length > 0 && (
+          <button className="encode-button" onClick={encodeMessage}>
+            Encode Message
+          </button>
+        )}
       </div>
-      {frameData.length === 0 && (
-        <textarea className="message-text-area" value="" readOnly />
-      )}
       {frameData.length > 0 && (
         <textarea
           className="message-text-area"
