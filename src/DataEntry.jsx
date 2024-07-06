@@ -4,17 +4,13 @@ import "./DataEntry.css";
 import MessageEncoder from "./MessageEncoder";
 import SaveToFile from "./SaveToFile";
 
-function DataEntry({ frameValues, messageType, protocol }) {
+function DataEntry({ frameValues }) {
   const [fieldValues, setFieldValues] = useState({});
-  const [frameData, setFrameData] = useState([]);
+  const [frameData, setFrameData] = useState({});
   const fieldRefs = useRef({});
 
-  console.log(frameValues);
-
   useEffect(() => {
-    setFieldValues({});
-    setFrameData([]);
-    fieldRefs.current = {};
+    setFrameData({});
   }, [frameValues]);
 
   const handleInputChange = (e, key, index) => {
@@ -31,41 +27,49 @@ function DataEntry({ frameValues, messageType, protocol }) {
   const clearFields = () => {
     setFieldValues({});
     fieldRefs.current = {};
-    setFrameData([]);
+    setFrameData({});
+  };
+
+  const anyFrameExceedsLimit = () => {
+    return Object.keys(frameValues).some(
+      (key) => parseInt(frameValues[key], 10) > 16,
+    );
   };
 
   const generateMessage = () => {
-    const messageFrames = Object.keys(frameValues).map((key) => {
-      const numberOfFields = parseInt(frameValues[key], 10);
-      const fields = Array.from({ length: numberOfFields }, (_, index) => {
-        const value = fieldValues[key]?.[index];
-        return value === undefined || value === null ? "" : value;
-      }).join("|");
+    const messageFrames = Object.keys(fieldValues).map((key) => {
+      const fields = Object.keys(fieldValues[key])
+        .map((fieldKey) => {
+          const value = fieldValues[key][fieldKey];
+          return value === undefined || value === null ? "" : value;
+        })
+        .join("|");
       return `${key}|${fields}`;
     });
     console.log(messageFrames);
     setFrameData(messageFrames);
   };
 
-  const encodeMessage = () => {
-    const encodedMessage = MessageEncoder.encodeMessageFrames(frameData);
+  const encodeMessage = async () => {
+    const messageFrames = Object.keys(fieldValues).map((key) => {
+      const fields = Object.keys(fieldValues[key])
+        .map((fieldKey) => {
+          const value = fieldValues[key][fieldKey];
+          return value === undefined || value === null ? "" : value;
+        })
+        .join("|");
+      return `${key}|${fields}`;
+    });
+    const encodedMessage = MessageEncoder.encodeMessageFrames(messageFrames);
     MessageEncoder.logControlCharacters(encodedMessage);
-    console.log(encodedMessage);
-
-    //Switch statement
-    if (protocol === "ASTM") {
-      if ((messageType = "Result")) {
-        SaveToFile.save(encodedMessage, "astmResults.in", "text/plain");
-      } else if ((messageType = "Query")) {
-        SaveToFile.save(encodedMessage, "astmQuery.in", "text/plain");
-      }
-    } else {
-      alert("HL7 function coming soon");
-    }
+    await SaveToFile.save(encodedMessage);
+    alert("Message encoded and saved to file");
   };
 
   return (
-    <div className="frames-container">
+    <div
+      className={`frames-container ${anyFrameExceedsLimit() ? "shift-left" : ""}`}
+    >
       <div>
         <p className="frame-separator"></p>
       </div>
@@ -82,16 +86,18 @@ function DataEntry({ frameValues, messageType, protocol }) {
             <div key={key} className="frame">
               <label className="frame-label">{key}</label>
               {[...Array(numberOfFields)].map((_, index) => (
-                <input
-                  key={index}
-                  className="frame-input"
-                  type="text"
-                  ref={(el) => {
-                    fieldRefs.current[`${key}-${index}`] = el;
-                  }}
-                  value={fieldValues[key]?.[index] || ""}
-                  onChange={(e) => handleInputChange(e, key, index)}
-                />
+                <div key={index} className="frame-field">
+                  <label className="field-label">{index + 1}</label>
+                  <input
+                    className="frame-input"
+                    type="text"
+                    ref={(el) => {
+                      fieldRefs.current[`${key}-${index}`] = el;
+                    }}
+                    value={fieldValues[key]?.[index] || ""}
+                    onChange={(e) => handleInputChange(e, key, index)}
+                  />
+                </div>
               ))}
             </div>
           );
@@ -104,19 +110,10 @@ function DataEntry({ frameValues, messageType, protocol }) {
         <button className="clear-button" onClick={clearFields}>
           Clear
         </button>
-        {frameData.length > 0 && (
-          <button className="encode-button" onClick={encodeMessage}>
-            Encode Message
-          </button>
-        )}
+        <button className="encode-button" onClick={encodeMessage}>
+          Encode Message
+        </button>
       </div>
-      {frameData.length > 0 && (
-        <textarea
-          className="message-text-area"
-          value={frameData.join("\n")}
-          readOnly
-        />
-      )}
     </div>
   );
 }

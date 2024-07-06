@@ -1,37 +1,87 @@
 .frames-container {
-    flex-wrap: wrap;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-top: 10px;
     transition: all 0.3s ease-in-out;
 }
 
 .frame-separator {
-    width: 800%;
-    max-width: 450px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    margin-right: 20px;
+    width: 100%;
+    max-width: 800px;
+    margin: 20px 0;
     border-bottom: 5px solid #dee2e6;
-    justify-content: center;
     display: flex;
+    justify-content: center;
 }
 
 .frames-header-label {
-    margin-left: 80px;
     max-width: 300px;
+    text-align: center;
 }
 
 .frames-p-label {
     margin-left: 30px;
+    text-align: center;
 }
 
-.generate-message-button {
+.frames {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+.frame {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.frame-label {
+    margin-right: 10px;
+    min-width: 50px;
+}
+
+.frame-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.field-label {
+    margin-right: 5px;
+}
+
+.frame-input {
+    text-align: center;
+    width: 50px;
+    margin-right: 5px;
+}
+
+.generate-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.generate-message-button,
+.clear-button,
+.encode-button {
     padding: 10px 20px;
-    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
+}
+
+.generate-message-button {
+    background-color: #007bff;
 }
 
 .generate-message-button:hover {
@@ -39,13 +89,7 @@
 }
 
 .clear-button {
-    padding: 10px 20px;
     background-color: red;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
     margin-left: 10px;
 }
 
@@ -53,34 +97,23 @@
     background-color: darkred;
 }
 
-.frame-label {
-    margin-right: 10px;
-}
-
-.frame-input {
-    text-align: center;
-    max-width: 50px;
-    margin-right: 5px;
-}
-
-.message-text-area {
-    width: 100%;
-    height: 100px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
 .encode-button {
-    padding: 10px 20px;
     background-color: green;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
     margin-left: 10px;
 }
 
 .encode-button:hover {
     background-color: darkgreen;
+}
+
+.message-text-area {
+    width: 100%;
+    max-width: 800px;
+    height: 100px;
+    margin: 10px 0;
+}
+
+/* Shift all frames to the left when .shift-left class is added */
+.shift-left .frames {
+    align-items: flex-start;
 }
