@@ -116,7 +116,7 @@ function Fields({ currentProtocol, currentMessageType, onFormSubmit }) {
         <form onSubmit={handleSubmit}>
           <p>
             Please Enter The Amount Of Fields Needed For Each Record <br />
-            Do not include the field record in the count <br />
+            Do NOT include the field record in the count <br />
             The field record is automatically included in the output
           </p>
           {currentProtocol === "ASTM" && currentMessageType === "Result"
@@ -154,7 +154,7 @@ function Fields({ currentProtocol, currentMessageType, onFormSubmit }) {
         <form onSubmit={handleSubmit}>
           <p>
             Please Enter The Amount Of Fields Needed For Each Record <br />
-            Do not include the field record in the count <br />
+            Do NOT include the field record in the count <br />
             The field record is automatically included in the output
           </p>
           {currentProtocol === "ASTM" && currentMessageType === "Result"

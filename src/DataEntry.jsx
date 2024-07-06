@@ -4,13 +4,13 @@ import "./DataEntry.css";
 import MessageEncoder from "./MessageEncoder";
 import SaveToFile from "./SaveToFile";
 
-function DataEntry({ frameValues }) {
+function DataEntry({ frameValues, messageType, protocol }) {
   const [fieldValues, setFieldValues] = useState({});
-  const [frameData, setFrameData] = useState({});
+  const [frameData, setFrameData] = useState([]);
   const fieldRefs = useRef({});
 
   useEffect(() => {
-    setFrameData({});
+    setFrameData([]);
   }, [frameValues]);
 
   const handleInputChange = (e, key, index) => {
@@ -27,7 +27,7 @@ function DataEntry({ frameValues }) {
   const clearFields = () => {
     setFieldValues({});
     fieldRefs.current = {};
-    setFrameData({});
+    setFrameData([]);
   };
 
   const anyFrameExceedsLimit = () => {
@@ -37,13 +37,12 @@ function DataEntry({ frameValues }) {
   };
 
   const generateMessage = () => {
-    const messageFrames = Object.keys(fieldValues).map((key) => {
-      const fields = Object.keys(fieldValues[key])
-        .map((fieldKey) => {
-          const value = fieldValues[key][fieldKey];
-          return value === undefined || value === null ? "" : value;
-        })
-        .join("|");
+    const messageFrames = Object.keys(frameValues).map((key) => {
+      const numberOfFields = parseInt(frameValues[key], 10);
+      const fields = Array.from({ length: numberOfFields }, (_, i) => {
+        const value = fieldValues[key]?.[i];
+        return value === undefined || value === null ? "" : value;
+      }).join("|");
       return `${key}|${fields}`;
     });
     console.log(messageFrames);
@@ -51,19 +50,27 @@ function DataEntry({ frameValues }) {
   };
 
   const encodeMessage = async () => {
-    const messageFrames = Object.keys(fieldValues).map((key) => {
-      const fields = Object.keys(fieldValues[key])
-        .map((fieldKey) => {
-          const value = fieldValues[key][fieldKey];
-          return value === undefined || value === null ? "" : value;
-        })
-        .join("|");
+    const messageFrames = Object.keys(frameValues).map((key) => {
+      const numberOfFields = parseInt(frameValues[key], 10);
+      const fields = Array.from({ length: numberOfFields }, (_, i) => {
+        const value = fieldValues[key]?.[i];
+        return value === undefined || value === null ? "" : value;
+      }).join("|");
       return `${key}|${fields}`;
     });
     const encodedMessage = MessageEncoder.encodeMessageFrames(messageFrames);
     MessageEncoder.logControlCharacters(encodedMessage);
-    await SaveToFile.save(encodedMessage);
-    alert("Message encoded and saved to file");
+    if (frameData.length !== 0) {
+      if (messageType === "Result" && protocol === "ASTM") {
+        await SaveToFile.save(encodedMessage, "astmResult.in", "text/plain");
+      } else if (messageType === "Query" && protocol === "ASTM") {
+        await SaveToFile.save(encodedMessage, "astmResult.in", "text/plain");
+      } else {
+        alert("HL7 functionality coming soon!");
+      }
+    } else {
+      alert("A message has to be generated first before it can be encoded!");
+    }
   };
 
   return (
@@ -89,6 +96,7 @@ function DataEntry({ frameValues }) {
                 <div key={index} className="frame-field">
                   <label className="field-label">{index + 1}</label>
                   <input
+                    key={index}
                     className="frame-input"
                     type="text"
                     ref={(el) => {
@@ -114,6 +122,13 @@ function DataEntry({ frameValues }) {
           Encode Message
         </button>
       </div>
+      {frameData.length > 0 && (
+        <textarea
+          className="message-text-area"
+          value={frameData.join("\n")}
+          readOnly
+        />
+      )}
     </div>
   );
 }
