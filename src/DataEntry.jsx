@@ -64,7 +64,7 @@ function DataEntry({ frameValues, messageType, protocol }) {
       if (messageType === "Result" && protocol === "ASTM") {
         await SaveToFile.save(encodedMessage, "astmResult.in", "text/plain");
       } else if (messageType === "Query" && protocol === "ASTM") {
-        await SaveToFile.save(encodedMessage, "astmResult.in", "text/plain");
+        await SaveToFile.save(encodedMessage, "astmQuery.in", "text/plain");
       } else {
         alert("HL7 functionality coming soon!");
       }
