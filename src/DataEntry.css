@@ -25,17 +25,35 @@
     text-align: center;
 }
 
+.frames {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+}
+
 .frame {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
     width: 100%;
-    max-width: 800px;
+    flex-wrap: wrap;
 }
 
 .frame-label {
     margin-right: 10px;
     min-width: 50px;
+}
+
+.frame-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.field-label {
+    margin-right: 5px;
 }
 
 .frame-input {
@@ -93,4 +111,9 @@
     max-width: 800px;
     height: 100px;
     margin: 10px 0;
+}
+
+/* Shift all frames to the left when .shift-left class is added */
+.shift-left .frames {
+    align-items: flex-start;
 }
